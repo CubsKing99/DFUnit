@@ -1,4 +1,4 @@
-Use seq_chnl.pkg
+﻿Use seq_chnl.pkg
 
 Use DFUNit\Results\ResultCollector.pkg
 
@@ -18,6 +18,12 @@ Class cDFUnitXMLReporter is a cDFUnitResultCollector_Mixin
     {Visibility=Private}
     Procedure Write String sText
         Write channel (piChannel(Self)) sText
+    End_Procedure
+
+    //2024-03-19 MRM Added a WriteLine method.  GoCD doesn't like the entire XML file to be on 1 line...
+    {Visibility=Private}
+    Procedure WriteLine String sText
+        Writeln channel (piChannel(Self)) sText
     End_Procedure
     
     {Visibility=Private}
@@ -120,8 +126,9 @@ Class cDFUnitXMLReporter is a cDFUnitResultCollector_Mixin
         Move (Seq_New_Channel()) to iChannel
         Direct_Output channel iChannel ('BINARY: ' + sFileName)
         Set piChannel to iChannel
-        
-        Send Write '<?xml version="1.0" encoding="UTF-8"?>'
+
+        //2024-03-19 MRM Use a new WriteLine method.  GoCD doesn't like the entire XML file to be on 1 line...
+        Send WriteLine '<?xml version="1.0" encoding="UTF-8"?>'
         Send Write '<testsuites>'
         
         Send WriteFixture ghoTestApplication
