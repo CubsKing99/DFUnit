@@ -21,11 +21,11 @@ Class cDFUnitXMLReporter is a cDFUnitResultCollector_Mixin
     End_Procedure
 
     //2024-03-19 MRM Added a WriteLine method.  GoCD doesn't like the entire XML file to be on 1 line...
-    {Visibility=Private}
+//    {Visibility = Private}
     Procedure WriteLine String sText
         Writeln channel (piChannel(Self)) sText
     End_Procedure
-    
+
     {Visibility=Private}
     Procedure WriteTest tDFUnitTestResult oTestResult
         String[] asMessages
@@ -41,7 +41,7 @@ Class cDFUnitXMLReporter is a cDFUnitResultCollector_Mixin
             Move ('time="' + String(SpanTotalSeconds(tsTook)) + "." + String(SpanMilliseconds(tsTook)) + '"') to sTime
         End
 
-        Send Write (SFormat('<testcase name="%1" assertions="%2" %3>', TestName(oTestResult.hTest), oTestResult.ulFailedAssertions + oTestResult.ulSucceededAssertions, Replaces(",", sTime, ".")))        
+        Send WriteLine (SFormat('<testcase name="%1" assertions="%2" %3>', TestName(oTestResult.hTest), oTestResult.ulFailedAssertions + oTestResult.ulSucceededAssertions, Replaces(",", sTime, ".")))        
         
         Move (SizeOfArray(oTestResult.aErrors) - 1) to iMaxIndex
         For iIterator from 0 to iMaxIndex
@@ -64,7 +64,7 @@ Class cDFUnitXMLReporter is a cDFUnitResultCollector_Mixin
             Move (Replaces("\r\n", sMessage, XML_NEWLINE_REPLACE)) to sMessage
             Move (Replaces(Character(10), sMessage, XML_NEWLINE_REPLACE)) to sMessage
             
-            Send Write (SFormat('<error message="%1"></error>', sMessage))
+            Send WriteLine (SFormat('<error message="%1"></error>', sMessage))
         Loop
         
         Move (SizeOfArray(oTestResult.aFailedAssertions) - 1) to iMaxIndex
@@ -81,10 +81,10 @@ Class cDFUnitXMLReporter is a cDFUnitResultCollector_Mixin
             Move (Replaces("\r\n", sMessage, XML_NEWLINE_REPLACE)) to sMessage
             Move (Replaces(Character(10), sMessage, XML_NEWLINE_REPLACE)) to sMessage
             
-            Send Write (SFormat('<failure message="%1"></failure>', sMessage))
+            Send WriteLine (SFormat('<failure message="%1"></failure>', sMessage))
         Loop
         
-        Send Write '</testcase>'
+        Send WriteLine '</testcase>'
     End_Procedure
     
     {Visibility=Private}
@@ -94,7 +94,7 @@ Class cDFUnitXMLReporter is a cDFUnitResultCollector_Mixin
         Get ResultOfFixture hFixture to oFixtureResult
         
         Get FixtureName of hFixture to sFixtureName
-        Send Write (SFormat('<testsuite name="%1" errors="%2" failures="%3">', sFixtureName, oFixtureResult.ulTotalErrors, oFixtureResult.ulTotalFailedAssertions))
+        Send WriteLine (SFormat('<testsuite name="%1" errors="%2" failures="%3">', sFixtureName, oFixtureResult.ulTotalErrors, oFixtureResult.ulTotalFailedAssertions))
         
         Integer iIterator iMaxIndex
         Move (SizeOfArray(oFixtureResult.ahChildFixtures) - 1) to iMaxIndex
@@ -107,7 +107,7 @@ Class cDFUnitXMLReporter is a cDFUnitResultCollector_Mixin
             Send WriteTest oFixtureResult.aTestResults[iIterator]
         Loop
         
-        Send Write '</testsuite>'
+        Send WriteLine '</testsuite>'
     End_Procedure
 
     {Visibility=Private}
@@ -129,11 +129,11 @@ Class cDFUnitXMLReporter is a cDFUnitResultCollector_Mixin
 
         //2024-03-19 MRM Use a new WriteLine method.  GoCD doesn't like the entire XML file to be on 1 line...
         Send WriteLine '<?xml version="1.0" encoding="UTF-8"?>'
-        Send Write '<testsuites>'
+        Send WriteLine '<testsuites>'
         
         Send WriteFixture ghoTestApplication
         
-        Send Write '</testsuites>'
+        Send WriteLine '</testsuites>'
         
         Close_Output channel iChannel
         Set piChannel to -1
